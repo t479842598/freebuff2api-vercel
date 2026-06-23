@@ -405,7 +405,7 @@ class AnthropicCompletionAccumulator:
         """Ingest one OpenAI SSE chunk."""
         self.id = chunk.get("id") or self.id
         self.created = chunk.get("created") or self.created
-        self.model = chunk.get("model") or self.model
+        # Keep original model — upstream chunk model may differ
         self.usage = chunk.get("usage") or self.usage
         self.system_fingerprint = (
             chunk.get("system_fingerprint") or self.system_fingerprint
@@ -551,7 +551,7 @@ class AnthropicStreamState:
         events: list[tuple[str, dict[str, Any]]] = []
 
         self.message_id = chunk.get("id") or self.message_id
-        self.model = chunk.get("model") or self.model
+        # Keep original model — upstream chunk model may differ
         self.usage = chunk.get("usage") or self.usage
         self.system_fingerprint = (
             chunk.get("system_fingerprint") or self.system_fingerprint

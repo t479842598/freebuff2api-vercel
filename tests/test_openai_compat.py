@@ -18,11 +18,14 @@ from freebuff2api.openai_compat import (
 
 class OpenAICompatTests(unittest.TestCase):
     def test_models_response_lists_all_freebuff_models(self) -> None:
+        from freebuff2api.models import ANTHROPIC_MODEL_ALIASES
         response = models_response()
 
+        expected = [model.id for model in ALL_MODELS]
+        expected.extend(sorted(ANTHROPIC_MODEL_ALIASES.keys()))
         self.assertEqual(
-            [item["id"] for item in response["data"]],
-            [model.id for model in ALL_MODELS],
+            sorted([item["id"] for item in response["data"]]),
+            sorted(expected),
         )
 
     def test_resolve_model_maps_agent_id(self) -> None:

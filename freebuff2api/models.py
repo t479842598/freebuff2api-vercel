@@ -106,18 +106,27 @@ def resolve_model(requested: str | None) -> FreebuffModel:
 
 
 def models_response() -> dict[str, object]:
-    return {
-        "object": "list",
-        "data": [
-            {
-                "id": model.id,
-                "object": "model",
-                "created": 0,
-                "owned_by": model.owned_by,
-            }
-            for model in ALL_MODELS
-        ],
-    }
+    data: list[dict[str, object]] = []
+    for model in ALL_MODELS:
+        data.append({
+            "id": model.id,
+            "object": "model",
+            "created": 0,
+            "owned_by": model.owned_by,
+        })
+    for alias, native_id in ANTHROPIC_MODEL_ALIASES.items():
+        owned_by = "anthropic"
+        for model in ALL_MODELS:
+            if model.id == native_id:
+                owned_by = model.owned_by
+                break
+        data.append({
+            "id": alias,
+            "object": "model",
+            "created": 0,
+            "owned_by": owned_by,
+        })
+    return {"object": "list", "data": data}
 
 
 def model_response(model_id: str) -> dict[str, object] | None:
